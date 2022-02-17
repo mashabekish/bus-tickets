@@ -27,16 +27,17 @@ namespace bus_tickets.Migrations
                         .HasColumnName("id");
 
                     b.Property<TimeOnly>("ArrivalTime")
-                        .HasColumnType("time(6)")
+                        .HasColumnType("time(0)")
                         .HasColumnName("arrivalTime");
 
                     b.Property<string>("BusType")
+                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("busType");
 
                     b.Property<double>("Cost")
-                        .HasColumnType("double")
+                        .HasColumnType("double(10,2) unsigned")
                         .HasColumnName("cost");
 
                     b.Property<DateOnly>("Date")
@@ -44,24 +45,26 @@ namespace bus_tickets.Migrations
                         .HasColumnName("date");
 
                     b.Property<TimeOnly>("DeparturesTime")
-                        .HasColumnType("time(6)")
+                        .HasColumnType("time(0)")
                         .HasColumnName("departuresTime");
 
                     b.Property<string>("Destination")
+                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("destination");
 
-                    b.Property<int>("Left")
-                        .HasColumnType("int")
+                    b.Property<uint>("Left")
+                        .HasColumnType("int unsigned")
                         .HasColumnName("left");
 
                     b.Property<string>("Number")
+                        .IsRequired()
                         .HasColumnType("longtext")
                         .HasColumnName("number");
 
-                    b.Property<int>("Sold")
-                        .HasColumnType("int")
+                    b.Property<uint>("Sold")
+                        .HasColumnType("int unsigned")
                         .HasColumnName("sold");
 
                     b.HasKey("Id");
@@ -77,11 +80,11 @@ namespace bus_tickets.Migrations
                         .HasColumnName("id");
 
                     b.Property<double>("Cost")
-                        .HasColumnType("double")
+                        .HasColumnType("double(10,2) unsigned")
                         .HasColumnName("cost");
 
-                    b.Property<int>("Count")
-                        .HasColumnType("int")
+                    b.Property<uint>("Count")
+                        .HasColumnType("int unsigned")
                         .HasColumnName("count");
 
                     b.Property<int>("FlightId")
@@ -117,11 +120,13 @@ namespace bus_tickets.Migrations
                         .HasColumnName("isAdmin");
 
                     b.Property<string>("Login")
+                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("login");
 
                     b.Property<string>("Password")
+                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("password");

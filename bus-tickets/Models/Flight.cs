@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace bus_tickets.Models
 {
@@ -7,25 +8,31 @@ namespace bus_tickets.Models
         [Key]
         public int Id { get; set; }
 
+        [Required]
         public string? Number { get; set; }
 
+        [Required]
         [StringLength(255)]
         public string? BusType { get; set; }
 
+        [Required]
         [StringLength(255)]
         public string? Destination { get; set; }
 
         public DateOnly Date { get; set; }
 
+        [Column(TypeName = "time(0)")]
         public TimeOnly DeparturesTime { get; set; }
 
+        [Column(TypeName = "time(0)")]
         public TimeOnly ArrivalTime { get; set; }
 
+        [Column(TypeName = "double(10,2) unsigned")]
         public double Cost { get; set; }
 
-        public int Left { get; set; }
+        public uint Left { get; set; }
 
-        public int Sold { get; set; }
+        public uint Sold { get; set; }
 
         public override string ToString()
         {

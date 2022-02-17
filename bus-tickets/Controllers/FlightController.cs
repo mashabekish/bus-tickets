@@ -48,7 +48,7 @@ namespace bus_tickets.Controllers
 
             double cost = GetCost();
 
-            int count = GetCount();
+            uint count = GetCount();
 
             Flight flight = new()
             {
@@ -71,252 +71,276 @@ namespace bus_tickets.Controllers
             return 0;
         }
 
-        private DateOnly GetDate()
+        private static DateOnly GetDate()
         {
-            Console.Write("Введите дату отправления ");
-            if (DateOnly.TryParse(Console.ReadLine(), out DateOnly date))
+            while (true)
             {
-                return date;
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Введена некорректная дата\n");
-                Console.ResetColor();
+                Console.Write("Введите дату отправления ");
+                if (DateOnly.TryParse(Console.ReadLine(), out DateOnly date))
+                {
+                    if (date >= DateOnly.FromDateTime(DateTime.Now))
+                    {
+                        return date;
+                    }
 
-                return GetDate();
-            }
-        }
-
-        private TimeOnly GetDeparturesTime()
-        {
-            Console.Write("Введите время отправления ");
-            if (TimeOnly.TryParse(Console.ReadLine(), out TimeOnly departuresTime))
-            {
-                return departuresTime;
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Введено некорректное время\n");
-                Console.ResetColor();
-
-                return GetDeparturesTime();
-            }
-        }
-
-        private TimeOnly GetArrivalTime(TimeOnly departuresTime)
-        {
-            Console.Write("Введите время прибытия ");
-            if (TimeOnly.TryParse(Console.ReadLine(), out TimeOnly arrivalTime))
-            {
-                if (arrivalTime < departuresTime)
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Дата не может быть меньше текущей\n");
+                    Console.ResetColor();
+                }
+                else
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Время прибытия не может быть меньше времени отправления\n");
+                    Console.WriteLine("Введена некорректная дата\n");
                     Console.ResetColor();
-
-                    return GetArrivalTime(departuresTime);
                 }
-
-                return arrivalTime;
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Введено некорректное время\n");
-                Console.ResetColor();
-
-                return GetArrivalTime(departuresTime);
             }
         }
 
-        private double GetCost()
+        private static TimeOnly GetDeparturesTime()
         {
-            Console.Write("Введите стоимость билета ");
-            if (double.TryParse(Console.ReadLine(), out double cost))
+            while (true)
             {
-                return cost;
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Введена некорректная стоимость\n");
-                Console.ResetColor();
+                Console.Write("Введите время отправления ");
+                if (TimeOnly.TryParse(Console.ReadLine(), out TimeOnly departuresTime))
+                {
+                    if (departuresTime > TimeOnly.FromDateTime(DateTime.Now))
+                    {
+                        return departuresTime;
+                    }
 
-                return GetCost();
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Время отправления не может быть меньше текущего или равное ему\n");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Введено некорректное время\n");
+                    Console.ResetColor();
+                }
             }
         }
 
-        internal static int GetCount()
+        private static TimeOnly GetArrivalTime(TimeOnly departuresTime)
         {
-            Console.Write("Введите количество билетов ");
-            if (int.TryParse(Console.ReadLine(), out int count))
+            while (true)
             {
-                return count;
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Введено некорректное количество\n");
-                Console.ResetColor();
+                Console.Write("Введите время прибытия ");
+                if (TimeOnly.TryParse(Console.ReadLine(), out TimeOnly arrivalTime))
+                {
+                    if (arrivalTime > departuresTime)
+                    {
+                        return arrivalTime;
+                    }
 
-                return GetCount();
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Время прибытия не может быть меньше или равно времени отправления\n");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Введено некорректное время\n");
+                    Console.ResetColor();
+                }
+            }
+        }
+
+        private static double GetCost()
+        {
+            while (true)
+            {
+                Console.Write("Введите стоимость билета ");
+                if (double.TryParse(Console.ReadLine(), out double cost) && cost > 0)
+                {
+                    return cost;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Введена некорректная стоимость\n");
+                    Console.ResetColor();
+                }
+            }
+        }
+
+        internal static uint GetCount()
+        {
+            while (true)
+            {
+                Console.Write("Введите количество билетов ");
+                if (uint.TryParse(Console.ReadLine(), out uint count))
+                {
+                    return count;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Введено некорректное количество\n");
+                    Console.ResetColor();
+                }
             }
         }
 
         internal int Update()
         {
-            Console.WriteLine("\n0. Назад");
-            Console.WriteLine("Введите Id рейса, которого хотите изменить");
-            string? key = Console.ReadLine();
-
-            if (!int.TryParse(key, out int id))
+            while (true)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Введены некорректные данные");
-                Console.ResetColor();
+                Console.WriteLine("\n0. Назад");
+                Console.WriteLine("Введите Id рейса, которого хотите изменить");
+                string? key = Console.ReadLine();
 
-                return Update();
-            }
+                if (!int.TryParse(key, out int id))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Введены некорректные данные");
+                    Console.ResetColor();
 
-            if (id == 0)
-            {
-                return 0;
-            }
+                    continue;
+                }
 
-            Flight? flight = database.Flights.FirstOrDefault(f => f.Id == id);
-            if (flight == null)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Рейс с таким id не существует");
-                Console.ResetColor();
+                if (id == 0)
+                {
+                    return 0;
+                }
 
-                return Update();
-            }
-            else
-            {
-                return Change(flight);
+                Flight? flight = database.Flights.FirstOrDefault(f => f.Id == id);
+                if (flight == null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Рейс с таким id не существует");
+                    Console.ResetColor();
+
+                    continue;
+                }
+                else
+                {
+                    return Change(flight);
+                }
             }
         }
 
         internal int Change(Flight flight)
         {
-            Console.WriteLine("\nВыберете, что хотите изменить");
-            Console.WriteLine("1. Номер рейса");
-            Console.WriteLine("2. Тип автобуса");
-            Console.WriteLine("3. Пункт назначения");
-            Console.WriteLine("4. Дата отправления");
-            Console.WriteLine("5. Время отправления");
-            Console.WriteLine("6. Время прибытия");
-            Console.WriteLine("7. Стоимость билета");
-            Console.WriteLine("8. Количество оставщихся билетов");
-            Console.WriteLine("9. Количество проданных билетов");
-            Console.WriteLine("0. Назад");
-
-            string? key = Console.ReadLine();
-            switch (key)
+            while (true)
             {
-                case "1":
-                    Console.Write("Введите номер рейса ");
-                    string? number = Console.ReadLine();
-                    flight.Number = number;
-                    break;
-                case "2":
-                    Console.Write("Введите тип автобуса ");
-                    string? busType = Console.ReadLine();
-                    flight.BusType = busType;
-                    break;
-                case "3":
-                    Console.Write("Введите пункт назначения ");
-                    string? destination = Console.ReadLine();
-                    flight.Destination = destination;
-                    break;
-                case "4":
-                    DateOnly date = GetDate();
-                    flight.Date = date;
-                    break;
-                case "5":
-                    TimeOnly departuresTime = GetDeparturesTime();
-                    flight.DeparturesTime = departuresTime;
-                    break;
-                case "6":
-                    TimeOnly arrivalTime = GetArrivalTime(flight.DeparturesTime);
-                    flight.ArrivalTime = arrivalTime;
-                    break;
-                case "7":
-                    double cost = GetCost();
-                    flight.Cost = cost;
-                    break;
-                case "8":
-                    int left = GetCount();
-                    flight.Left = left;
-                    break;
-                case "9":
-                    int sold = GetCount();
-                    flight.Sold = sold;
-                    break;
-                case "0":
-                    return 0;
-                default:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Выбран несуществующий вариант");
-                    Console.ResetColor();
-                    return Change(flight);
+                Console.WriteLine("\nВыберете, что хотите изменить");
+                Console.WriteLine("1. Номер рейса");
+                Console.WriteLine("2. Тип автобуса");
+                Console.WriteLine("3. Пункт назначения");
+                Console.WriteLine("4. Дата отправления");
+                Console.WriteLine("5. Время отправления");
+                Console.WriteLine("6. Время прибытия");
+                Console.WriteLine("7. Стоимость билета");
+                Console.WriteLine("8. Количество оставщихся билетов");
+                Console.WriteLine("9. Количество проданных билетов");
+                Console.WriteLine("0. Назад");
+
+                string? key = Console.ReadLine();
+                switch (key)
+                {
+                    case "1":
+                        Console.Write("Введите номер рейса ");
+                        string? number = Console.ReadLine();
+                        flight.Number = number;
+                        break;
+                    case "2":
+                        Console.Write("Введите тип автобуса ");
+                        string? busType = Console.ReadLine();
+                        flight.BusType = busType;
+                        break;
+                    case "3":
+                        Console.Write("Введите пункт назначения ");
+                        string? destination = Console.ReadLine();
+                        flight.Destination = destination;
+                        break;
+                    case "4":
+                        DateOnly date = GetDate();
+                        flight.Date = date;
+                        break;
+                    case "5":
+                        TimeOnly departuresTime = GetDeparturesTime();
+                        flight.DeparturesTime = departuresTime;
+                        break;
+                    case "6":
+                        TimeOnly arrivalTime = GetArrivalTime(flight.DeparturesTime);
+                        flight.ArrivalTime = arrivalTime;
+                        break;
+                    case "7":
+                        double cost = GetCost();
+                        flight.Cost = cost;
+                        break;
+                    case "8":
+                        uint left = GetCount();
+                        flight.Left = left;
+                        break;
+                    case "9":
+                        uint sold = GetCount();
+                        flight.Sold = sold;
+                        break;
+                    case "0":
+                        return 0;
+                    default:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Выбран несуществующий вариант");
+                        Console.ResetColor();
+                        break;
+                }
+
+                database.Flights.Update(flight);
+                database.SaveChanges();
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Рейс изменен");
+                Console.ResetColor();
             }
-
-            database.Flights.Update(flight);
-            database.SaveChanges();
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Рейс изменен");
-            Console.ResetColor();
-
-            return Change(flight);
         }
 
         internal int Delete()
         {
-            Console.WriteLine("\n0. Назад");
-            Console.WriteLine("Введите Id рейса, которого хотите удалить");
-            string? key = Console.ReadLine();
-
-            if (!int.TryParse(key, out int id))
+            while (true)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Введены некорректные данные");
-                Console.ResetColor();
+                Console.WriteLine("\n0. Назад");
+                Console.WriteLine("Введите Id рейса, которого хотите удалить");
+                string? key = Console.ReadLine();
 
-                return Delete();
-            }
-
-            if (id == 0)
-            {
-                return 0;
-            }
-
-            Flight? flight = database.Flights.FirstOrDefault(f => f.Id == id);
-            if (flight == null)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Рейс с таким id не существует");
-                Console.ResetColor();
-
-                return Delete();
-            }
-            else
-            {
-                Console.Write("Введите 1 если вы действительно хотите удалить рейс ");
-                if (Console.ReadLine() == "1")
+                if (!int.TryParse(key, out int id))
                 {
-                    database.Flights.Remove(flight);
-                    database.SaveChanges();
-
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Рейс удален");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Введены некорректные данные");
                     Console.ResetColor();
+
+                    continue;
                 }
-                return 0;
+
+                if (id == 0)
+                {
+                    return 0;
+                }
+
+                Flight? flight = database.Flights.FirstOrDefault(f => f.Id == id);
+                if (flight == null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Рейс с таким id не существует");
+                    Console.ResetColor();
+
+                    continue;
+                }
+                else
+                {
+                    Console.Write("Введите 1 если вы действительно хотите удалить рейс ");
+                    if (Console.ReadLine() == "1")
+                    {
+                        database.Flights.Remove(flight);
+                        database.SaveChanges();
+
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("Рейс удален");
+                        Console.ResetColor();
+                    }
+                    return 0;
+                }
             }
         }
     }

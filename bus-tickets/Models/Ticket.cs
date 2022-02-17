@@ -12,8 +12,9 @@ namespace bus_tickets.Models
 
         public int FlightId { get; set; }
 
-        public int Count { get; set; }
+        public uint Count { get; set; }
 
+        [Column(TypeName = "double(10,2) unsigned")]
         public double Cost { get; set; }
 
         [ForeignKey("UserId")]

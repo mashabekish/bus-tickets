@@ -13,26 +13,34 @@ namespace bus_tickets.Controllers
 
         internal User Access()
         {
-            Console.WriteLine("\n1. Авторизация");
-            Console.WriteLine("2. Регистрация");
-            Console.WriteLine("3. Выход");
-
-            string? key = Console.ReadLine();
-            switch (key)
+            while (true)
             {
-                case "1":
-                    return Authorization();
-                case "2":
-                    Registration();
-                    return Access();
-                case "3":
-                    Environment.Exit(1);
-                    return Access();
-                default:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Выбран несуществующий вариант");
-                    Console.ResetColor();
-                    return Access();
+                Console.WriteLine("\n1. Авторизация");
+                Console.WriteLine("2. Регистрация");
+                Console.WriteLine("3. Выход");
+
+                string? key = Console.ReadLine();
+                switch (key)
+                {
+                    case "1":
+                        User? user = Authorization();
+                        if (user != null)
+                        {
+                            return user;
+                        }
+                        break;
+                    case "2":
+                        Registration();
+                        break;
+                    case "3":
+                        Environment.Exit(1);
+                        break;
+                    default:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Выбран несуществующий вариант");
+                        Console.ResetColor();
+                        break;
+                }
             }
         }
 
@@ -66,87 +74,93 @@ namespace bus_tickets.Controllers
             return password;
         }
 
-        private User Authorization()
+        private User? Authorization()
         {
-            Console.WriteLine("\n0. Назад");
-            Console.Write("Введите логин ");
-            string? login = Console.ReadLine();
-
-            if (login == "0")
+            while (true)
             {
-                return Access();
-            }
+                Console.WriteLine("\n0. Назад");
+                Console.Write("Введите логин ");
+                string? login = Console.ReadLine();
 
-            string password = GetPassword();
+                if (login == "0")
+                {
+                    return null;
+                }
 
-            User? user = database.Users.FirstOrDefault(u => u.Login == login);
-            if (user == null)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Пользователя с таким логином не существует");
-                Console.ResetColor();
+                string password = GetPassword();
 
-                return Authorization();
-            }
-            else if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Неверный пароль");
-                Console.ResetColor();
+                User? user = database.Users.FirstOrDefault(u => u.Login == login);
+                if (user == null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Пользователя с таким логином не существует");
+                    Console.ResetColor();
 
-                return Authorization();
-            }
-            else if (!user.IsActive)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Пользователь не активирован");
-                Console.ResetColor();
+                    continue;
+                }
+                else if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Неверный пароль");
+                    Console.ResetColor();
 
-                return Authorization();
-            }
-            else
-            {
-                return user;
+                    continue;
+                }
+                else if (!user.IsActive)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Пользователь не активирован");
+                    Console.ResetColor();
+
+                    continue;
+                }
+                else
+                {
+                    return user;
+                }
             }
         }
 
         private int Registration()
         {
-            Console.WriteLine("\n0. Назад");
-            Console.Write("Введите логин ");
-            string? login = Console.ReadLine();
-
-            if (login == "0")
+            while (true)
             {
-                return 0;
-            }
+                Console.WriteLine("\n0. Назад");
+                Console.Write("Введите логин ");
+                string? login = Console.ReadLine();
 
-            if (database.Users.Where(u => u.Login == login).Any())
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Пользователь с таким логином уже существует");
+                if (login == "0")
+                {
+                    return 0;
+                }
+
+                if (database.Users.Where(u => u.Login == login).Any())
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Пользователь с таким логином уже существует");
+                    Console.ResetColor();
+
+                    continue;
+                }
+
+                string password = GetPassword();
+
+                User user = new()
+                {
+                    Login = login,
+                    Password = BCrypt.Net.BCrypt.HashPassword(password),
+                    IsAdmin = false,
+                    IsActive = false
+                };
+                database.Users.Add(user);
+                database.SaveChanges();
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Пользователь успешно загеристрирован, дождитесь подтверждения администратора");
                 Console.ResetColor();
 
-                Registration();
+                return 0;
             }
-
-            string password = GetPassword();
-
-            User user = new()
-            {
-                Login = login,
-                Password = BCrypt.Net.BCrypt.HashPassword(password),
-                IsAdmin = false,
-                IsActive = false
-            };
-            database.Users.Add(user);
-            database.SaveChanges();
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Пользователь успешно загеристрирован, дождитесь подтверждения администратора");
-            Console.ResetColor();
-
-            return 0;
         }
 
         internal void List()
@@ -163,305 +177,323 @@ namespace bus_tickets.Controllers
 
         internal int Create()
         {
-            Console.WriteLine("\n0. Назад");
-            Console.Write("Введите логин ");
-            string? login = Console.ReadLine();
-
-            if (login == "0")
+            while (true)
             {
-                return 0;
-            }
+                Console.WriteLine("\n0. Назад");
+                Console.Write("Введите логин ");
+                string? login = Console.ReadLine();
 
-            if (database.Users.Where(u => u.Login == login).Any())
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Пользователь с таким логином уже существует");
+                if (login == "0")
+                {
+                    return 0;
+                }
+
+                if (database.Users.Where(u => u.Login == login).Any())
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Пользователь с таким логином уже существует");
+                    Console.ResetColor();
+
+                    continue;
+                }
+
+                string password = GetPassword();
+
+                Console.Write("Введите 1 если пользователь - администратор ");
+                string? key = Console.ReadLine();
+
+                bool isAdmin = false;
+                if (key == "1")
+                {
+                    isAdmin = true;
+                }
+
+                User user = new()
+                {
+                    Login = login,
+                    Password = BCrypt.Net.BCrypt.HashPassword(password),
+                    IsAdmin = isAdmin,
+                    IsActive = true
+                };
+                database.Users.Add(user);
+                database.SaveChanges();
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Пользователь добавлен");
                 Console.ResetColor();
 
-                Registration();
+                return 0;
             }
-
-            string password = GetPassword();
-
-            Console.Write("Введите 1 если пользователь - администратор ");
-            string? key = Console.ReadLine();
-
-            bool isAdmin = false;
-            if (key == "1")
-            {
-                isAdmin = true;
-            }
-
-            User user = new()
-            {
-                Login = login,
-                Password = BCrypt.Net.BCrypt.HashPassword(password),
-                IsAdmin = isAdmin,
-                IsActive = true
-            };
-            database.Users.Add(user);
-            database.SaveChanges();
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Пользователь добавлен");
-            Console.ResetColor();
-
-            return 0;
         }
 
         internal int Update(int adminId)
         {
-            Console.WriteLine("\n0. Назад");
-            Console.WriteLine("Введите Id пользователя, которого хотите изменить");
-            string? key = Console.ReadLine();
-
-            if (!int.TryParse(key, out int id))
+            while (true)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Введены некорректные данные");
-                Console.ResetColor();
+                Console.WriteLine("\n0. Назад");
+                Console.WriteLine("Введите Id пользователя, которого хотите изменить");
+                string? key = Console.ReadLine();
 
-                return Update(adminId);
-            }
+                if (!int.TryParse(key, out int id))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Введены некорректные данные");
+                    Console.ResetColor();
 
-            if (id == 0)
-            {
-                return 0;
-            }
+                    continue;
+                }
 
-            User? user = database.Users.FirstOrDefault(u => u.Id == id);
-            if (user == null)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Учетная запись с таким id не существует");
-                Console.ResetColor();
+                if (id == 0)
+                {
+                    return 0;
+                }
 
-                return Update(adminId);
-            }
-            else
-            {
-                return Change(adminId, user);
+                User? user = database.Users.FirstOrDefault(u => u.Id == id);
+                if (user == null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Учетная запись с таким id не существует");
+                    Console.ResetColor();
+
+                    continue;
+                }
+                else
+                {
+                    return Change(adminId, user);
+                }
             }
         }
 
         internal int Change(int adminId, User user)
         {
-            Console.WriteLine("\nВыберете, что хотите изменить");
-            Console.WriteLine("1. Логин");
-            Console.WriteLine("2. Пароль");
-            Console.WriteLine("3. Роль");
-            Console.WriteLine("0. Назад");
-
-            string? key = Console.ReadLine();
-            switch (key)
+            while (true)
             {
-                case "1":
-                    Console.Write("Введите логин ");
-                    string? login = Console.ReadLine();
-                    user.Login = login;
-                    break;
-                case "2":
-                    string password = GetPassword();
-                    user.Password = password;
-                    break;
-                case "3":
-                    if (adminId == user.Id)
-                    {
+                Console.WriteLine("\nВыберете, что хотите изменить");
+                Console.WriteLine("1. Логин");
+                Console.WriteLine("2. Пароль");
+                Console.WriteLine("3. Роль");
+                Console.WriteLine("0. Назад");
+
+                string? key = Console.ReadLine();
+                switch (key)
+                {
+                    case "1":
+                        Console.Write("Введите логин ");
+                        string? login = Console.ReadLine();
+                        user.Login = login;
+                        break;
+                    case "2":
+                        string password = GetPassword();
+                        user.Password = password;
+                        break;
+                    case "3":
+                        if (adminId == user.Id)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Нельзя изменить свою роль");
+                            Console.ResetColor();
+
+                            continue;
+                        }
+
+                        Console.Write("Введите 1 если пользователь - администратор ");
+                        bool isAdmin = false;
+                        if (Console.ReadLine() == "1")
+                        {
+                            isAdmin = true;
+                        }
+                        user.IsAdmin = isAdmin;
+                        break;
+                    case "0":
+                        return 0;
+                    default:
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Нельзя изменить свою роль");
+                        Console.WriteLine("Выбран несуществующий вариант");
                         Console.ResetColor();
-                        return Change(adminId, user);
-                    }
 
-                    Console.Write("Введите 1 если пользователь - администратор ");
-                    bool isAdmin = false;
-                    if (Console.ReadLine() == "1")
-                    {
-                        isAdmin = true;
-                    }
-                    user.IsAdmin = isAdmin;
-                    break;
-                case "0":
-                    return 0;
-                default:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Выбран несуществующий вариант");
-                    Console.ResetColor();
-                    return Change(adminId, user);
+                        continue;
+                }
+
+                database.Users.Update(user);
+                database.SaveChanges();
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Пользователь изменен");
+                Console.ResetColor();
             }
-
-            database.Users.Update(user);
-            database.SaveChanges();
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Пользователь изменен");
-            Console.ResetColor();
-
-            return Change(adminId, user);
         }
 
         internal int Delete(int adminId)
         {
-            Console.WriteLine("\n0. Назад");
-            Console.WriteLine("Введите Id пользователя, которого хотите удалить");
-            string? key = Console.ReadLine();
-
-            if (!int.TryParse(key, out int id))
+            while (true)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Введены некорректные данные");
-                Console.ResetColor();
+                Console.WriteLine("\n0. Назад");
+                Console.WriteLine("Введите Id пользователя, которого хотите удалить");
+                string? key = Console.ReadLine();
 
-                return Delete(adminId);
-            }
-
-            if (id == 0)
-            {
-                return 0;
-            }
-
-            if (adminId == id)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Нельзя удалить свою учетную запись");
-                Console.ResetColor();
-
-                return Delete(adminId);
-            }
-
-            User? user = database.Users.FirstOrDefault(u => u.Id == id);
-            if (user == null)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Учетная запись с таким id не существует");
-                Console.ResetColor();
-
-                return Delete(adminId);
-            }
-            else
-            {
-                Console.Write("Введите 1 если вы действительно хотите удалить учетную запись ");
-                if (Console.ReadLine() == "1")
+                if (!int.TryParse(key, out int id))
                 {
-                    database.Users.Remove(user);
-                    database.SaveChanges();
-
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Пользователь удален");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Введены некорректные данные");
                     Console.ResetColor();
+
+                    continue;
                 }
-                return 0;
+
+                if (id == 0)
+                {
+                    return 0;
+                }
+
+                if (adminId == id)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Нельзя удалить свою учетную запись");
+                    Console.ResetColor();
+
+                    continue;
+                }
+
+                User? user = database.Users.FirstOrDefault(u => u.Id == id);
+                if (user == null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Учетная запись с таким id не существует");
+                    Console.ResetColor();
+
+                    continue;
+                }
+                else
+                {
+                    Console.Write("Введите 1 если вы действительно хотите удалить учетную запись ");
+                    if (Console.ReadLine() == "1")
+                    {
+                        database.Users.Remove(user);
+                        database.SaveChanges();
+
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("Пользователь удален");
+                        Console.ResetColor();
+                    }
+                    return 0;
+                }
             }
         }
 
         internal int Activation()
         {
-            Console.WriteLine("\n0. Назад");
-            Console.WriteLine("Введите Id пользователя, которого хотите подтвердить");
-            string? key = Console.ReadLine();
-
-            if (!int.TryParse(key, out int id))
+            while (true)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Введены некорректные данные");
-                Console.ResetColor();
+                Console.WriteLine("\n0. Назад");
+                Console.WriteLine("Введите Id пользователя, которого хотите подтвердить");
+                string? key = Console.ReadLine();
 
-                return Activation();
-            }
+                if (!int.TryParse(key, out int id))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Введены некорректные данные");
+                    Console.ResetColor();
 
-            if (id == 0)
-            {
-                return 0;
-            }
+                    continue;
+                }
 
-            User? user = database.Users.FirstOrDefault(u => u.Id == id);
-            if (user == null)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Учетная запись с таким id не существует");
-                Console.ResetColor();
+                if (id == 0)
+                {
+                    return 0;
+                }
 
-                return Activation();
-            }
-            else if (user.IsActive)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Пользователь уже подтвержден");
-                Console.ResetColor();
+                User? user = database.Users.FirstOrDefault(u => u.Id == id);
+                if (user == null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Учетная запись с таким id не существует");
+                    Console.ResetColor();
 
-                return Activation();
-            }
-            else
-            {
-                user.IsActive = true;
-                database.Users.Update(user);
-                database.SaveChanges();
+                    continue;
+                }
+                else if (user.IsActive)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Пользователь уже подтвержден");
+                    Console.ResetColor();
 
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Пользователь подтвержден");
-                Console.ResetColor();
+                    continue;
+                }
+                else
+                {
+                    user.IsActive = true;
+                    database.Users.Update(user);
+                    database.SaveChanges();
 
-                return 0;
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Пользователь подтвержден");
+                    Console.ResetColor();
+
+                    return 0;
+                }
             }
         }
 
         internal int Deactivation(int adminId)
         {
-            Console.WriteLine("\n0. Назад");
-            Console.WriteLine("Введите Id пользователя, которого хотите заблокировать");
-            string? key = Console.ReadLine();
-
-            if (!int.TryParse(key, out int id))
+            while (true)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Введены некорректные данные");
-                Console.ResetColor();
+                Console.WriteLine("\n0. Назад");
+                Console.WriteLine("Введите Id пользователя, которого хотите заблокировать");
+                string? key = Console.ReadLine();
 
-                return Deactivation(adminId);
-            }
+                if (!int.TryParse(key, out int id))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Введены некорректные данные");
+                    Console.ResetColor();
 
-            if (id == 0)
-            {
-                return 0;
-            }
+                    continue;
+                }
 
-            if (adminId == id)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Нельзя заблокировать свою учетную запись");
-                Console.ResetColor();
+                if (id == 0)
+                {
+                    return 0;
+                }
 
-                return Delete(adminId);
-            }
+                if (adminId == id)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Нельзя заблокировать свою учетную запись");
+                    Console.ResetColor();
 
-            User? user = database.Users.FirstOrDefault(u => u.Id == id);
-            if (user == null)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Учетная запись с таким id не существует");
-                Console.ResetColor();
+                    continue;
+                }
 
-                return Deactivation(adminId);
-            }
-            else if (!user.IsActive)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Пользователь уже заблокирован");
-                Console.ResetColor();
+                User? user = database.Users.FirstOrDefault(u => u.Id == id);
+                if (user == null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Учетная запись с таким id не существует");
+                    Console.ResetColor();
 
-                return Deactivation(adminId);
-            }
-            else
-            {
-                user.IsActive = false;
-                database.Users.Update(user);
-                database.SaveChanges();
+                    continue;
+                }
+                else if (!user.IsActive)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Пользователь уже заблокирован");
+                    Console.ResetColor();
 
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Пользователь заблокирован");
-                Console.ResetColor();
+                    continue;
+                }
+                else
+                {
+                    user.IsActive = false;
+                    database.Users.Update(user);
+                    database.SaveChanges();
 
-                return 0;
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Пользователь заблокирован");
+                    Console.ResetColor();
+
+                    return 0;
+                }
             }
         }
     }

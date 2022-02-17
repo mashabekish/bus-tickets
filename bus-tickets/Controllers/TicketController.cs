@@ -37,78 +37,81 @@ namespace bus_tickets.Controllers
 
         internal int Buy(int userId)
         {
-            Console.WriteLine("\n0. Назад");
-            Console.WriteLine("Введите Id рейса, на который хотите купить билеты");
-            string? key = Console.ReadLine();
-
-            if (!int.TryParse(key, out int id))
+            while (true)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Введены некорректные данные");
-                Console.ResetColor();
+                Console.WriteLine("\n0. Назад");
+                Console.WriteLine("Введите Id рейса, на который хотите купить билеты");
+                string? key = Console.ReadLine();
 
-                return Buy(userId);
-            }
-
-            if (id == 0)
-            {
-                return 0;
-            }
-
-            Flight? flight = database.Flights.FirstOrDefault(f => f.Id == id);
-            if (flight == null)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Рейс с таким id не существует");
-                Console.ResetColor();
-
-                return Buy(userId);
-            }
-            else
-            {
-                int count = FlightController.GetCount();
-
-                if (flight.Left < count)
+                if (!int.TryParse(key, out int id))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("На данный рейс осталось меньше билетов, чем вы хотите приобрести");
+                    Console.WriteLine("Введены некорректные данные");
                     Console.ResetColor();
 
+                    continue;
+                }
+
+                if (id == 0)
+                {
                     return 0;
                 }
 
-                if (flight.Date < DateOnly.FromDateTime(DateTime.Now) || (flight.Date == DateOnly.FromDateTime(DateTime.Now) && flight.DeparturesTime < TimeOnly.FromDateTime(DateTime.Now)))
+                Flight? flight = database.Flights.FirstOrDefault(f => f.Id == id);
+                if (flight == null)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Покупка билета на данный рейс недоступна");
+                    Console.WriteLine("Рейс с таким id не существует");
                     Console.ResetColor();
 
-                    return 0;
+                    continue;
                 }
-
-                Console.Write("Введите 1 если вы действительно хотите приобрести билеты ");
-                if (Console.ReadLine() == "1")
+                else
                 {
-                    Ticket ticket = new()
+                    uint count = FlightController.GetCount();
+
+                    if (flight.Left < count)
                     {
-                        UserId = userId,
-                        FlightId = flight.Id,
-                        Cost = flight.Cost,
-                        Count = count
-                    };
-                    database.Tickets.Add(ticket);
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("На данный рейс осталось меньше билетов, чем вы хотите приобрести");
+                        Console.ResetColor();
 
-                    flight.Left -= count;
-                    flight.Sold += count;
-                    database.Flights.Update(flight);
+                        return 0;
+                    }
 
-                    database.SaveChanges();
+                    if (flight.Date < DateOnly.FromDateTime(DateTime.Now) || (flight.Date == DateOnly.FromDateTime(DateTime.Now) && flight.DeparturesTime <= TimeOnly.FromDateTime(DateTime.Now)))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Покупка билета на данный рейс недоступна, так как автобус уже в пути");
+                        Console.ResetColor();
 
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Вы успешно приобрели билеты");
-                    Console.ResetColor();
+                        return 0;
+                    }
+
+                    Console.Write("Введите 1 если вы действительно хотите приобрести билеты ");
+                    if (Console.ReadLine() == "1")
+                    {
+                        Ticket ticket = new()
+                        {
+                            UserId = userId,
+                            FlightId = flight.Id,
+                            Cost = flight.Cost,
+                            Count = count
+                        };
+                        database.Tickets.Add(ticket);
+
+                        flight.Left -= count;
+                        flight.Sold += count;
+                        database.Flights.Update(flight);
+
+                        database.SaveChanges();
+
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("Вы успешно приобрели билеты");
+                        Console.ResetColor();
+                    }
+                    return 0;
                 }
-                return 0;
             }
         }
     }

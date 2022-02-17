@@ -7,9 +7,11 @@ namespace bus_tickets.Models
         [Key]
         public int Id { get; set; }
 
+        [Required]
         [StringLength(255)]
         public string? Login { get; set; }
 
+        [Required]
         [StringLength(255)]
         public string? Password { get; set; }
 

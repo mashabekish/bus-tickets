@@ -18,18 +18,18 @@ namespace bus_tickets.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    number = table.Column<string>(type: "longtext", nullable: true)
+                    number = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    busType = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true)
+                    busType = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    destination = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true)
+                    destination = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     date = table.Column<DateOnly>(type: "date", nullable: false),
-                    departuresTime = table.Column<TimeOnly>(type: "time(6)", nullable: false),
-                    arrivalTime = table.Column<TimeOnly>(type: "time(6)", nullable: false),
-                    cost = table.Column<double>(type: "double", nullable: false),
-                    left = table.Column<int>(type: "int", nullable: false),
-                    sold = table.Column<int>(type: "int", nullable: false)
+                    departuresTime = table.Column<TimeOnly>(type: "time(0)", nullable: false),
+                    arrivalTime = table.Column<TimeOnly>(type: "time(0)", nullable: false),
+                    cost = table.Column<double>(type: "double(10,2) unsigned", nullable: false),
+                    left = table.Column<uint>(type: "int unsigned", nullable: false),
+                    sold = table.Column<uint>(type: "int unsigned", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -43,9 +43,9 @@ namespace bus_tickets.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    login = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true)
+                    login = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    password = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true)
+                    password = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     isAdmin = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     isActive = table.Column<bool>(type: "tinyint(1)", nullable: false)
@@ -64,8 +64,8 @@ namespace bus_tickets.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     userId = table.Column<int>(type: "int", nullable: false),
                     flightId = table.Column<int>(type: "int", nullable: false),
-                    count = table.Column<int>(type: "int", nullable: false),
-                    cost = table.Column<double>(type: "double", nullable: false)
+                    count = table.Column<uint>(type: "int unsigned", nullable: false),
+                    cost = table.Column<double>(type: "double(10,2) unsigned", nullable: false)
                 },
                 constraints: table =>
                 {
