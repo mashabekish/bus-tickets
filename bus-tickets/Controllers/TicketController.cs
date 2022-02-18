@@ -13,25 +13,33 @@ namespace bus_tickets.Controllers
 
         internal void List()
         {
-            Console.WriteLine(string.Format("{0,5} | {1,15} | {2,8} | {3,9} | {4,10}",
-                "Id ", "Id пользователя", "Id рейса", "Стоимость", "Количество"));
-
             List<Ticket> tickets = database.Tickets.OrderByDescending(t => t.UserId).ToList();
-            foreach (Ticket ticket in tickets)
-            {
-                Console.WriteLine(ticket);
-            }
+            Print(tickets);
         }
 
         internal void List(int userId)
         {
-            Console.WriteLine(string.Format("{0,5} | {1,15} | {2,8} | {3,9} | {4,10}",
-                "Id ", "Id пользователя", "Id рейса", "Стоимость", "Количество"));
-
             List<Ticket> tickets = database.Tickets.Where(t => t.UserId == userId).OrderByDescending(t => t.UserId).ToList();
-            foreach (Ticket ticket in tickets)
+            Print(tickets);
+        }
+
+        internal static void Print(List<Ticket> tickets)
+        {
+            if (tickets.Count == 0)
             {
-                Console.WriteLine(ticket);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Билетов по вашему запросу не найдено");
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.WriteLine(string.Format("{0,5} | {1,15} | {2,8} | {3,10} | {4,9}",
+                    "Id ", "Id пользователя", "Id рейса", "Количество", "Стоимость"));
+
+                foreach (Ticket ticket in tickets)
+                {
+                    Console.WriteLine(ticket);
+                }
             }
         }
 
@@ -95,8 +103,8 @@ namespace bus_tickets.Controllers
                         {
                             UserId = userId,
                             FlightId = flight.Id,
-                            Cost = flight.Cost,
-                            Count = count
+                            Count = count,
+                            Cost = flight.Cost * count
                         };
                         database.Tickets.Add(ticket);
 

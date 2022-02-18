@@ -13,13 +13,153 @@ namespace bus_tickets.Controllers
 
         internal void List()
         {
-            Console.WriteLine(string.Format("{0,5} | {1,5} | {2,12} | {3,16} | {4,10} | {5,11} | {6,8} | {7,9} | {8,8} | {9,7}",
-                "Id ", "Номер", "Тип автобуса", "Пункт назначения", "Дата   ", "Отправление", "Прибытие", "Стоимость", "Осталось", "Продано"));
-
             List<Flight> flights = database.Flights.OrderByDescending(f => f.Id).ToList();
-            foreach (Flight flight in flights)
+            Print(flights);
+
+            if (flights.Count != 0)
             {
-                Console.WriteLine(flight);
+                Filter();
+            }
+        }
+
+        internal static void Print(List<Flight> flights)
+        {
+            if (flights.Count == 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Рейсов по вашему запросу не найдено");
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.WriteLine(string.Format("{0,5} | {1,5} | {2,12} | {3,16} | {4,10} | {5,11} | {6,8} | {7,9} | {8,8} | {9,7}",
+                    "Id ", "Номер", "Тип автобуса", "Пункт назначения", "Дата   ", "Отправление", "Прибытие", "Стоимость", "Осталось", "Продано"));
+
+                foreach (Flight flight in flights)
+                {
+                    Console.WriteLine(flight);
+                }
+            }
+        }
+
+        internal int Filter()
+        {
+            while (true)
+            {
+                Console.WriteLine("\n0. Назад");
+                Console.WriteLine("1. Поиск");
+                Console.WriteLine("2. Сортировка");
+
+                string? key = Console.ReadLine();
+                switch (key)
+                {
+                    case "1":
+                        return Search();
+                    case "2":
+                        return Sorting();
+                    case "0":
+                        return 0;
+                    default:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Выбран несуществующий вариант");
+                        Console.ResetColor();
+                        break;
+                }
+            }
+        }
+
+        internal int Search()
+        {
+            while (true)
+            {
+                Console.WriteLine("\n0. Назад");
+                Console.WriteLine("1. Поиск по номеру рейса");
+                Console.WriteLine("2. Поиск по пункту назначения");
+                Console.WriteLine("3. Поиск по дате отправления");
+
+                List<Flight> flights = new();
+                string? key = Console.ReadLine();
+                switch (key)
+                {
+                    case "1":
+                        Console.Write("Введите номер рейса ");
+                        string? number = Console.ReadLine();
+                        flights = database.Flights.OrderByDescending(f => f.Id)
+                            .Where(f => !string.IsNullOrEmpty(number) && !string.IsNullOrEmpty(f.Number) && f.Number.Contains(number, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                        break;
+                    case "2":
+                        Console.Write("Введите пункт назначения ");
+                        string? destination = Console.ReadLine();
+                        flights = database.Flights.OrderByDescending(f => f.Id)
+                            .Where(f => !string.IsNullOrEmpty(destination) && !string.IsNullOrEmpty(f.Destination) && f.Destination.Contains(destination, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                        break;
+                    case "3":
+                        DateOnly date = GetDate();
+                        flights = database.Flights.OrderByDescending(f => f.Id).Where(f => f.Date == date).ToList();
+                        break;
+                    case "0":
+                        return 0;
+                    default:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Выбран несуществующий вариант");
+                        Console.ResetColor();
+                        continue;
+                }
+                Print(flights);
+            }
+        }
+
+        internal int Sorting()
+        {
+            while (true)
+            {
+                Console.WriteLine("\n0. Назад");
+                Console.WriteLine("1. По возрастанию даты отправления");
+                Console.WriteLine("2. По возрастанию времени отправления");
+                Console.WriteLine("3. По возрастанию времени прибытия");
+                Console.WriteLine("4. По возрастанию стоимости");
+                Console.WriteLine("5. По убыванию даты отправления");
+                Console.WriteLine("6. По убыванию времени отправления");
+                Console.WriteLine("7. По убыванию времени прибытия");
+                Console.WriteLine("8. По убыванию стоимости");
+
+                List<Flight> flights = new();
+                string? key = Console.ReadLine();
+                switch (key)
+                {
+                    case "1":
+                        flights = database.Flights.OrderBy(f => f.Date).ToList();
+                        break;
+                    case "2":
+                        flights = database.Flights.OrderBy(f => f.DeparturesTime).ToList();
+                        break;
+                    case "3":
+                        flights = database.Flights.OrderBy(f => f.ArrivalTime).ToList();
+                        break;
+                    case "4":
+                        flights = database.Flights.OrderBy(f => f.Cost).ToList();
+                        break;
+                    case "5":
+                        flights = database.Flights.OrderByDescending(f => f.Date).ToList();
+                        break;
+                    case "6":
+                        flights = database.Flights.OrderByDescending(f => f.DeparturesTime).ToList();
+                        break;
+                    case "7":
+                        flights = database.Flights.OrderByDescending(f => f.ArrivalTime).ToList();
+                        break;
+                    case "8":
+                        flights = database.Flights.OrderByDescending(f => f.Cost).ToList();
+                        break;
+                    case "0":
+                        return 0;
+                    default:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Выбран несуществующий вариант");
+                        Console.ResetColor();
+                        continue;
+                }
+                Print(flights);
             }
         }
 
@@ -153,7 +293,7 @@ namespace bus_tickets.Controllers
                 Console.Write("Введите стоимость билета ");
                 if (double.TryParse(Console.ReadLine(), out double cost) && cost > 0)
                 {
-                    return cost;
+                    return Math.Round(cost, 2);
                 }
                 else
                 {
@@ -169,7 +309,7 @@ namespace bus_tickets.Controllers
             while (true)
             {
                 Console.Write("Введите количество билетов ");
-                if (uint.TryParse(Console.ReadLine(), out uint count))
+                if (uint.TryParse(Console.ReadLine(), out uint count) && count != 0)
                 {
                     return count;
                 }

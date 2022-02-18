@@ -25,7 +25,7 @@ namespace bus_tickets.Models
 
         public override string ToString()
         {
-            return string.Format("{0,5} | {1,15} | {2,8} | {3,9} | {4,10}",
+            return string.Format("{0,5} | {1,15} | {2,8} | {3,10} | {4,9}",
                 Id, UserId, FlightId, Count, Cost);
         }
     }

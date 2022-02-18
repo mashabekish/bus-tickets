@@ -20,7 +20,7 @@ namespace bus_tickets
         {
             while (true)
             {
-                Console.WriteLine("\n--- Продажа автобусных билетов ---");
+                Console.WriteLine("--- Продажа автобусных билетов ---");
 
                 User user = userController.Access();
                 if (user.IsAdmin)
@@ -58,6 +58,7 @@ namespace bus_tickets
                         ticketController.Buy(id);
                         break;
                     case "4":
+                        Console.Clear();
                         return 0;
                     case "5":
                         Environment.Exit(1);
@@ -86,7 +87,7 @@ namespace bus_tickets
                 Console.WriteLine("8. Добавить новый рейс");
                 Console.WriteLine("9. Изменить рейс");
                 Console.WriteLine("10. Удалить рейс");
-                Console.WriteLine("11. Посмотреть историю покупок");
+                Console.WriteLine("11. Посмотреть историю приобретения билетов");
                 Console.WriteLine("12. Выйти из аккаунта");
                 Console.WriteLine("13. Закрыть");
                 string? key = Console.ReadLine();
@@ -126,6 +127,7 @@ namespace bus_tickets
                         ticketController.List();
                         break;
                     case "12":
+                        Console.Clear();
                         return 0;
                     case "13":
                         Environment.Exit(1);

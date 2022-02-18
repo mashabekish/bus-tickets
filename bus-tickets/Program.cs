@@ -33,10 +33,11 @@ namespace bus_tickets
 
             optionsBuilder.UseMySql(connetionString,
                 new MySqlServerVersion(new Version(8, 0, 28)),
-                x =>
+                options =>
                 {
-                    x.MigrationsHistoryTable("migrations");
-                    x.EnableRetryOnFailure(10, TimeSpan.FromSeconds(1), null);
+                    options.EnableStringComparisonTranslations();
+                    options.MigrationsHistoryTable("migrations");
+                    options.EnableRetryOnFailure(10, TimeSpan.FromSeconds(1), null);
                 });
 
             return new Database(optionsBuilder.Options);

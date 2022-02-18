@@ -168,7 +168,7 @@ namespace bus_tickets.Controllers
             Console.WriteLine(string.Format("{0,5} | {1,9} | {2,8} | {3,5} | {4,11}",
                 "Id ", "Логин  ", "Пароль ", "Админ", "Подтвержден"));
 
-            List<User> users = database.Users.OrderByDescending(u => u.Id).ToList();
+            List<User> users = database.Users.ToList();
             foreach (User user in users)
             {
                 Console.WriteLine(user);
