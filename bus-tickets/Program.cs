@@ -14,7 +14,7 @@ namespace bus_tickets
                 database.Database.Migrate();
 
                 Handler handler = new(database);
-                handler.Start();
+                handler.Authorize();
             }
             catch (Exception ex)
             {
@@ -25,19 +25,20 @@ namespace bus_tickets
             }
         }
 
+        //Создание базы данных и добавление миграций
         public Database CreateDbContext(string[]? args = null)
         {
             string connetionString = $"Server={host};Port={port};UserId={user};Password={password};Database={database};charset=utf8;";
 
             DbContextOptionsBuilder<Database> optionsBuilder = new();
 
-            optionsBuilder.UseMySql(connetionString,
+            _ = optionsBuilder.UseMySql(connetionString,
                 new MySqlServerVersion(new Version(8, 0, 28)),
                 options =>
                 {
-                    options.EnableStringComparisonTranslations();
-                    options.MigrationsHistoryTable("migrations");
-                    options.EnableRetryOnFailure(10, TimeSpan.FromSeconds(1), null);
+                    _ = options.EnableStringComparisonTranslations();
+                    _ = options.MigrationsHistoryTable("migrations");
+                    _ = options.EnableRetryOnFailure(10, TimeSpan.FromSeconds(1), null);
                 });
 
             return new Database(optionsBuilder.Options);

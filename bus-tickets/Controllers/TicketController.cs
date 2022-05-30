@@ -11,18 +11,21 @@ namespace bus_tickets.Controllers
             this.database = database;
         }
 
+        //Получение списка билетов
         internal void List()
         {
             List<Ticket> tickets = database.Tickets.OrderByDescending(t => t.UserId).ToList();
             Print(tickets);
         }
 
+        //Получение списка билетов пользователя
         internal void List(int userId)
         {
             List<Ticket> tickets = database.Tickets.Where(t => t.UserId == userId).OrderByDescending(t => t.UserId).ToList();
             Print(tickets);
         }
 
+        //Вывод списка билетов
         internal static void Print(List<Ticket> tickets)
         {
             if (tickets.Count == 0)
@@ -43,6 +46,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Покупка билета пользователем
         internal int Buy(int userId)
         {
             while (true)
@@ -106,13 +110,13 @@ namespace bus_tickets.Controllers
                             Count = count,
                             Cost = flight.Cost * count
                         };
-                        database.Tickets.Add(ticket);
+                        _ = database.Tickets.Add(ticket);
 
                         flight.Left -= count;
                         flight.Sold += count;
-                        database.Flights.Update(flight);
+                        _ = database.Flights.Update(flight);
 
-                        database.SaveChanges();
+                        _ = database.SaveChanges();
 
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("Вы успешно приобрели билеты");

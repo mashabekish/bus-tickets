@@ -16,25 +16,20 @@ namespace bus_tickets
             ticketController = new(database);
         }
 
-        internal void Start()
+        //Авторизация пользователя в систему
+        internal void Authorize()
         {
             while (true)
             {
                 Console.WriteLine("--- Продажа автобусных билетов ---");
 
-                User user = userController.Access();
-                if (user.IsAdmin)
-                {
-                    AdminMenu(user.Id);
-                }
-                else
-                {
-                    UserMenu(user.Id);
-                }
+                User user = userController.GetUser();
+                _ = user.IsAdmin ? GetAdminMenu(user.Id) : GetUserMenu(user.Id);
             }
         }
 
-        private int UserMenu(int id)
+        //Отображение пользовательского меню
+        private int GetUserMenu(int id)
         {
             while (true)
             {
@@ -55,7 +50,7 @@ namespace bus_tickets
                         break;
                     case "3":
                         flightController.List();
-                        ticketController.Buy(id);
+                        _ = ticketController.Buy(id);
                         break;
                     case "4":
                         Console.Clear();
@@ -72,7 +67,8 @@ namespace bus_tickets
             }
         }
 
-        private int AdminMenu(int id)
+        //Отображение меню администратора
+        private int GetAdminMenu(int id)
         {
             while (true)
             {
@@ -97,31 +93,31 @@ namespace bus_tickets
                         userController.List();
                         break;
                     case "2":
-                        userController.Create();
+                        _ = userController.Create();
                         break;
                     case "3":
-                        userController.Update(id);
+                        _ = userController.Update(id);
                         break;
                     case "4":
-                        userController.Delete(id);
+                        _ = userController.Delete(id);
                         break;
                     case "5":
-                        userController.Activation();
+                        _ = userController.Activation();
                         break;
                     case "6":
-                        userController.Deactivation(id);
+                        _ = userController.Deactivation(id);
                         break;
                     case "7":
                         flightController.List();
                         break;
                     case "8":
-                        flightController.Create();
+                        _ = flightController.Create();
                         break;
                     case "9":
-                        flightController.Update();
+                        _ = flightController.Update();
                         break;
                     case "10":
-                        flightController.Delete();
+                        _ = flightController.Delete();
                         break;
                     case "11":
                         ticketController.List();

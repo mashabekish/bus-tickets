@@ -16,6 +16,7 @@ namespace bus_tickets
             : base(dbContextOptions)
         { }
 
+        //Определение конфигурации моделей базы данных
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -32,7 +33,7 @@ namespace bus_tickets
                 }
             }
 
-            modelBuilder.Entity<User>().HasData(new User()
+            _ = modelBuilder.Entity<User>().HasData(new User()
             {
                 Id = 1,
                 Login = "admin",

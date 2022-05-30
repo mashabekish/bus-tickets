@@ -11,6 +11,7 @@ namespace bus_tickets.Controllers
             this.database = database;
         }
 
+        //Получение списка рейсов
         internal void List()
         {
             List<Flight> flights = database.Flights.OrderByDescending(f => f.Id).ToList();
@@ -18,10 +19,11 @@ namespace bus_tickets.Controllers
 
             if (flights.Count != 0)
             {
-                Filter();
+                _ = Filter();
             }
         }
 
+        //Вывод списка рейсов
         internal static void Print(List<Flight> flights)
         {
             if (flights.Count == 0)
@@ -42,6 +44,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Выбор метода фильтрации рейсов
         internal int Filter()
         {
             while (true)
@@ -68,6 +71,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Поиск рейса
         internal int Search()
         {
             while (true)
@@ -109,6 +113,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Сортировка рейсов
         internal int Sorting()
         {
             while (true)
@@ -163,6 +168,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Добавление нового рейса
         internal int Create()
         {
             Console.WriteLine("\n0. Назад");
@@ -201,8 +207,8 @@ namespace bus_tickets.Controllers
                 Cost = cost,
                 Left = count
             };
-            database.Flights.Add(flight);
-            database.SaveChanges();
+            _ = database.Flights.Add(flight);
+            _ = database.SaveChanges();
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Рейс добавлен");
@@ -211,6 +217,7 @@ namespace bus_tickets.Controllers
             return 0;
         }
 
+        //Получение даты отправления автобуса
         private static DateOnly GetDate()
         {
             while (true)
@@ -236,6 +243,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Получение времени отправления автобуса
         private static TimeOnly GetDeparturesTime()
         {
             while (true)
@@ -261,6 +269,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Получение времени прибытия автобуса
         private static TimeOnly GetArrivalTime(TimeOnly departuresTime)
         {
             while (true)
@@ -286,6 +295,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Получение стоимости билета
         private static double GetCost()
         {
             while (true)
@@ -304,6 +314,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Получение количества билетов
         internal static uint GetCount()
         {
             while (true)
@@ -322,6 +333,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Редактирование данных рейса
         internal int Update()
         {
             while (true)
@@ -360,6 +372,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Выбор полей для редактирования рейса
         internal int Change(Flight flight)
         {
             while (true)
@@ -427,8 +440,8 @@ namespace bus_tickets.Controllers
                         break;
                 }
 
-                database.Flights.Update(flight);
-                database.SaveChanges();
+                _ = database.Flights.Update(flight);
+                _ = database.SaveChanges();
 
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Рейс изменен");
@@ -436,6 +449,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Удаление существующего рейса
         internal int Delete()
         {
             while (true)
@@ -472,8 +486,8 @@ namespace bus_tickets.Controllers
                     Console.Write("Введите 1 если вы действительно хотите удалить рейс ");
                     if (Console.ReadLine() == "1")
                     {
-                        database.Flights.Remove(flight);
-                        database.SaveChanges();
+                        _ = database.Flights.Remove(flight);
+                        _ = database.SaveChanges();
 
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("Рейс удален");

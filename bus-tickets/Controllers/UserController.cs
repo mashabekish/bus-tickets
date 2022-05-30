@@ -11,7 +11,8 @@ namespace bus_tickets.Controllers
             this.database = database;
         }
 
-        internal User Access()
+        //Получение данных пользователя
+        internal User GetUser()
         {
             while (true)
             {
@@ -23,14 +24,14 @@ namespace bus_tickets.Controllers
                 switch (key)
                 {
                     case "1":
-                        User? user = Authorization();
+                        User? user = Authenticate();
                         if (user != null)
                         {
                             return user;
                         }
                         break;
                     case "2":
-                        Registration();
+                        _ = Register();
                         break;
                     case "3":
                         Environment.Exit(1);
@@ -44,6 +45,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Получение пароля и его отображение с заменой всех символов на "*"
         private static string GetPassword()
         {
             Console.Write("Введите пароль ");
@@ -74,7 +76,8 @@ namespace bus_tickets.Controllers
             return password;
         }
 
-        private User? Authorization()
+        //Аутентификация пользователя
+        private User? Authenticate()
         {
             while (true)
             {
@@ -121,7 +124,8 @@ namespace bus_tickets.Controllers
             }
         }
 
-        private int Registration()
+        //Регистрация пользователя
+        private int Register()
         {
             while (true)
             {
@@ -152,8 +156,8 @@ namespace bus_tickets.Controllers
                     IsAdmin = false,
                     IsActive = false
                 };
-                database.Users.Add(user);
-                database.SaveChanges();
+                _ = database.Users.Add(user);
+                _ = database.SaveChanges();
 
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Пользователь успешно загеристрирован, дождитесь подтверждения администратора");
@@ -163,6 +167,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Вывод списка пользователей
         internal void List()
         {
             Console.WriteLine(string.Format("{0,5} | {1,9} | {2,8} | {3,5} | {4,11}",
@@ -175,6 +180,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Добавление нового пользователя
         internal int Create()
         {
             while (true)
@@ -215,8 +221,8 @@ namespace bus_tickets.Controllers
                     IsAdmin = isAdmin,
                     IsActive = true
                 };
-                database.Users.Add(user);
-                database.SaveChanges();
+                _ = database.Users.Add(user);
+                _ = database.SaveChanges();
 
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Пользователь добавлен");
@@ -226,6 +232,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Редактирование учетной записи пользователя
         internal int Update(int adminId)
         {
             while (true)
@@ -264,6 +271,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Выбор данных для редактирования учетной записи
         internal int Change(int adminId, User user)
         {
             while (true)
@@ -314,8 +322,8 @@ namespace bus_tickets.Controllers
                         continue;
                 }
 
-                database.Users.Update(user);
-                database.SaveChanges();
+                _ = database.Users.Update(user);
+                _ = database.SaveChanges();
 
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Пользователь изменен");
@@ -323,6 +331,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Удаление существующего пользователя
         internal int Delete(int adminId)
         {
             while (true)
@@ -368,8 +377,8 @@ namespace bus_tickets.Controllers
                     Console.Write("Введите 1 если вы действительно хотите удалить учетную запись ");
                     if (Console.ReadLine() == "1")
                     {
-                        database.Users.Remove(user);
-                        database.SaveChanges();
+                        _ = database.Users.Remove(user);
+                        _ = database.SaveChanges();
 
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("Пользователь удален");
@@ -380,6 +389,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Активация администратором учетной записи пользователя
         internal int Activation()
         {
             while (true)
@@ -422,8 +432,8 @@ namespace bus_tickets.Controllers
                 else
                 {
                     user.IsActive = true;
-                    database.Users.Update(user);
-                    database.SaveChanges();
+                    _ = database.Users.Update(user);
+                    _ = database.SaveChanges();
 
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Пользователь подтвержден");
@@ -434,6 +444,7 @@ namespace bus_tickets.Controllers
             }
         }
 
+        //Блокировка администратором учетной записи пользователя
         internal int Deactivation(int adminId)
         {
             while (true)
@@ -485,8 +496,8 @@ namespace bus_tickets.Controllers
                 else
                 {
                     user.IsActive = false;
-                    database.Users.Update(user);
-                    database.SaveChanges();
+                    _ = database.Users.Update(user);
+                    _ = database.SaveChanges();
 
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Пользователь заблокирован");
