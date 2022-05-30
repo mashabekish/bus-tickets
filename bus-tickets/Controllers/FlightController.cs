@@ -71,7 +71,7 @@ namespace bus_tickets.Controllers
             }
         }
 
-        //Поиск рейса
+        //Поиск рейсов
         internal int Search()
         {
             while (true)
