@@ -390,7 +390,7 @@ namespace bus_tickets.Controllers
         }
 
         //Активация администратором учетной записи пользователя
-        internal int Activation()
+        internal int Activate()
         {
             while (true)
             {
@@ -445,7 +445,7 @@ namespace bus_tickets.Controllers
         }
 
         //Блокировка администратором учетной записи пользователя
-        internal int Deactivation(int adminId)
+        internal int Deactivate(int adminId)
         {
             while (true)
             {

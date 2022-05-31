@@ -14,14 +14,7 @@ namespace bus_tickets.Controllers
         //Получение списка билетов
         internal void List()
         {
-            List<Ticket> tickets = database.Tickets.OrderByDescending(t => t.UserId).ToList();
-            Print(tickets);
-        }
-
-        //Получение списка билетов пользователя
-        internal void List(int userId)
-        {
-            List<Ticket> tickets = database.Tickets.Where(t => t.UserId == userId).OrderByDescending(t => t.UserId).ToList();
+            List<Ticket> tickets = database.Tickets.OrderByDescending(t => t.Id).ToList();
             Print(tickets);
         }
 
@@ -42,6 +35,36 @@ namespace bus_tickets.Controllers
                 foreach (Ticket ticket in tickets)
                 {
                     Console.WriteLine(ticket);
+                }
+            }
+        }
+
+        //Получение списка билетов пользователя
+        internal void List(int userId)
+        {
+            List<Ticket> tickets = database.Tickets.Where(t => t.UserId == userId).OrderByDescending(t => t.Id).ToList();
+            List<Flight> flights = database.Flights.Where(f => tickets.Select(t => t.FlightId).Contains(f.Id)).ToList();
+            Print(tickets, flights);
+        }
+
+        //Вывод списка билетов пользователя
+        internal static void Print(List<Ticket> tickets, List<Flight> flights)
+        {
+            if (tickets.Count == 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Вы еще не приобрели ни одного билета");
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.WriteLine(string.Format("{0,17} | {1,10} | {2,11} | {3,8} | {4,10} | {5,9} | {6,7}",
+                   "Пункт назначения", "Дата   ", "Отправление", "Прибытие", "Количество", "Стоимость", "Итого "));
+
+                foreach (Ticket ticket in tickets)
+                {
+                    Flight flight = flights.First(f => f.Id == ticket.FlightId);
+                    Console.WriteLine(ticket.ToString(flight));
                 }
             }
         }

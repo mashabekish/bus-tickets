@@ -28,5 +28,11 @@ namespace bus_tickets.Models
             return string.Format("{0,5} | {1,15} | {2,8} | {3,10} | {4,9}",
                 Id, UserId, FlightId, Count, Cost);
         }
+
+        public string ToString(Flight flight)
+        {
+            return string.Format("{0,17} | {1,10} | {2,11} | {3,8} | {4,10} | {5,9} | {6,8}",
+                flight.Destination, flight.Date, flight.DeparturesTime, flight.ArrivalTime, Count, flight.Cost, Cost);
+        }
     }
 }

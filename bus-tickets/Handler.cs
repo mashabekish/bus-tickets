@@ -24,12 +24,12 @@ namespace bus_tickets
                 Console.WriteLine("--- Продажа автобусных билетов ---");
 
                 User user = userController.GetUser();
-                _ = user.IsAdmin ? GetAdminMenu(user.Id) : GetUserMenu(user.Id);
+                _ = user.IsAdmin ? PrintAdminMenu(user.Id) : PrintUserMenu(user.Id);
             }
         }
 
         //Отображение пользовательского меню
-        private int GetUserMenu(int id)
+        private int PrintUserMenu(int id)
         {
             while (true)
             {
@@ -68,7 +68,7 @@ namespace bus_tickets
         }
 
         //Отображение меню администратора
-        private int GetAdminMenu(int id)
+        private int PrintAdminMenu(int id)
         {
             while (true)
             {
@@ -102,10 +102,10 @@ namespace bus_tickets
                         _ = userController.Delete(id);
                         break;
                     case "5":
-                        _ = userController.Activation();
+                        _ = userController.Activate();
                         break;
                     case "6":
-                        _ = userController.Deactivation(id);
+                        _ = userController.Deactivate(id);
                         break;
                     case "7":
                         flightController.List();

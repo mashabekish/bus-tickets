@@ -188,7 +188,7 @@ namespace bus_tickets.Controllers
 
             DateOnly date = GetDate();
 
-            TimeOnly departuresTime = GetDeparturesTime();
+            TimeOnly departuresTime = GetDeparturesTime(date);
 
             TimeOnly arrivalTime = GetArrivalTime(departuresTime);
 
@@ -244,14 +244,15 @@ namespace bus_tickets.Controllers
         }
 
         //Получение времени отправления автобуса
-        private static TimeOnly GetDeparturesTime()
+        private static TimeOnly GetDeparturesTime(DateOnly date)
         {
             while (true)
             {
                 Console.Write("Введите время отправления ");
                 if (TimeOnly.TryParse(Console.ReadLine(), out TimeOnly departuresTime))
                 {
-                    if (departuresTime > TimeOnly.FromDateTime(DateTime.Now))
+                    DateTime now = DateTime.Now;
+                    if ((date == DateOnly.FromDateTime(now) && departuresTime > TimeOnly.FromDateTime(now)) || date > DateOnly.FromDateTime(now))
                     {
                         return departuresTime;
                     }
@@ -412,7 +413,7 @@ namespace bus_tickets.Controllers
                         flight.Date = date;
                         break;
                     case "5":
-                        TimeOnly departuresTime = GetDeparturesTime();
+                        TimeOnly departuresTime = GetDeparturesTime(date);
                         flight.DeparturesTime = departuresTime;
                         break;
                     case "6":
